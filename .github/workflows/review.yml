@@ -1,0 +1,54 @@
+# CodeGuard — git-native PR reviewer
+#
+# Drop this file into any repository at .github/workflows/codeguard.yml
+# and add an ANTHROPIC_API_KEY secret. On every pull request, CodeGuard
+# will leave an inline review, a summary comment, and open issues for
+# any critical findings.
+
+name: CodeGuard Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  review:
+    name: CodeGuard · AI PR Review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout CodeGuard agent repo
+        uses: actions/checkout@v4
+        with:
+          repository: open-gitagent/codeguard
+          ref: main
+          path: .codeguard
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: .codeguard/package.json
+
+      - name: Install dependencies
+        working-directory: .codeguard
+        run: npm install --omit=dev --no-audit --no-fund
+
+      - name: Install tsx
+        working-directory: .codeguard
+        run: npm install tsx --no-audit --no-fund
+
+      - name: Run CodeGuard
+        working-directory: .codeguard
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npx tsx runtime/index.ts

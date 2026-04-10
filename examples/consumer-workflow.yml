@@ -1,0 +1,40 @@
+# Example: Drop this file into YOUR repo at .github/workflows/codeguard.yml
+# to get AI PR reviews from CodeGuard.
+#
+# Prerequisites:
+#   1. Add ANTHROPIC_API_KEY to your repo's Actions secrets
+#      (Settings → Secrets and variables → Actions → New repository secret)
+#
+# That's it. CodeGuard will run on every PR.
+
+name: CodeGuard
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  checks: write
+
+jobs:
+  codeguard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: open-gitagent/codeguard
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm install --omit=dev
+
+      - run: npx tsx runtime/index.ts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

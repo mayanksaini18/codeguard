@@ -1,0 +1,58 @@
+name: codeguard
+version: 0.1.0
+description: A git-native, framework-agnostic AI PR reviewer built on the GitAgent standard.
+
+maintainers:
+  - name: CodeGuard Contributors
+
+model:
+  provider: anthropic
+  name: claude-sonnet-4-6
+  temperature: 0.2
+  max_tokens: 4096
+
+identity:
+  soul: SOUL.md
+  rules: RULES.md
+
+capabilities:
+  skills:
+    - skills/security-audit.md
+    - skills/test-coverage.md
+    - skills/code-quality.md
+    - skills/breaking-changes.md
+  tools:
+    - tools/github-pr.md
+
+triggers:
+  - type: github_pull_request
+    events:
+      - opened
+      - synchronize
+      - reopened
+  - type: cli
+    command: codeguard review
+
+outputs:
+  - inline_pr_comments
+  - pr_summary_comment
+  - github_issues
+  - pr_status_check
+
+compliance:
+  risk_tier: standard
+  audit_logging: true
+  human_in_the_loop:
+    mode: advisory
+    description: CodeGuard posts reviews and opens issues, but never auto-merges PRs. Humans always approve final merges.
+
+runtime:
+  entrypoint: runtime/index.ts
+  language: typescript
+  node_version: ">=20"
+
+tags:
+  - code-review
+  - security
+  - git-native
+  - pr-automation
