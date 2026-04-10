@@ -27,7 +27,7 @@ jobs:
       - name: Checkout CodeGuard agent repo
         uses: actions/checkout@v4
         with:
-          repository: open-gitagent/codeguard
+          repository: mayanksaini18/codeguard
           ref: main
           path: .codeguard
 

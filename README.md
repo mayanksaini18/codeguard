@@ -73,7 +73,7 @@ That's it. Open a PR and CodeGuard will review it.
 ## Run it locally
 
 ```bash
-git clone https://github.com/open-gitagent/codeguard
+git clone https://github.com/mayanksaini18/codeguard
 cd codeguard
 npm install
 cp .env.example .env   # fill in your keys

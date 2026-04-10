@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: open-gitagent/codeguard
+          repository: mayanksaini18/codeguard
           ref: main
 
       - uses: actions/setup-node@v4
